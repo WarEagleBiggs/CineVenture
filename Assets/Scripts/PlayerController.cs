@@ -4,12 +4,22 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    //Other script
+    public GameController Gcontrol;
+
     // Player move vars
     public Rigidbody2D theRB;
     public float moveSpeed;
 
     //Bools
     public bool isShrubInInventory = false;
+    public bool isConversation1Done = false;
+    public bool isLevel1Active = false;
+    public bool isLevel2Active = false;
+    public bool isLevel3Active = false;
+    
+    //floats
+    public float CanOnlyHappenOnce1 = 0f;
 
     // Objs
     public GameObject Shrub;
@@ -18,9 +28,39 @@ public class PlayerController : MonoBehaviour
     public GameObject Dial3;
     public GameObject Dial4;
     public GameObject Dial5;
+    public GameObject Obj1;
+    public GameObject Obj2;
+    public GameObject Obj3;
+    public GameObject Obj4;
+    public GameObject Knights;
+    public GameObject RocksBlockingPath;
+    public GameObject Intro1;
+
+
+
+    //Trigger objs
+    public GameObject Trigger1;
+    public GameObject Trigger2;
+    public GameObject Trigger3;
 
     //Player anim vars
     public Animator myAnim;
+
+
+    void Start()
+    {
+        //remember this happens in INTRO level!
+        //nothing yet
+    }
+
+    IEnumerator waiter()
+    {
+        
+        //Wait for 8 seconds
+        yield return new WaitForSeconds(12);
+        Intro1.SetActive(false);
+
+    }
 
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -35,17 +75,59 @@ public class PlayerController : MonoBehaviour
             if (isShrubInInventory)
             {
                 Dial5.SetActive(true);
+                
             } else
             {
                 Dial1.SetActive(true);
             }
+        } else if (collision.gameObject.tag == "Gate1")
+        {
+
+            Gcontrol.Level1.SetActive(false);
+            Gcontrol.TutorialLevel.SetActive(true);
         }
+    }
+
+    void Intro1Active()
+    {
+        CanOnlyHappenOnce1++;
+        if(CanOnlyHappenOnce1 == 1f)
+        {
+            Intro1.SetActive(true);
+        }
+        
     }
 
 
     // Update is called once per frame
     void Update()
     {
+        if (Gcontrol.Level1.activeSelf)
+        {
+            isLevel1Active = true;
+        }
+
+        if (isLevel1Active)
+        {
+            Intro1Active();
+            StartCoroutine(waiter());
+
+        }
+
+
+        if (isShrubInInventory)
+        {
+            Obj2.SetActive(false);
+            Obj3.SetActive(true);
+        }
+
+        if (isConversation1Done)
+        {
+            Knights.transform.localPosition = new Vector3(-5.7f, 0f, 0f);
+            Obj3.SetActive(false);
+            Obj4.SetActive(true);
+        }
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             if (Dial1.activeSelf)
@@ -63,7 +145,18 @@ public class PlayerController : MonoBehaviour
             } else if (Dial4.activeSelf)
             {
                 Dial4.SetActive(false);
-            }
+                Obj1.SetActive(false);
+                Obj2.SetActive(true);
+                RocksBlockingPath.SetActive(false);
+            } else if (Dial5.activeSelf)
+            {
+                Dial5.SetActive(false);
+                
+                Trigger1.SetActive(false);
+                Trigger2.SetActive(false);
+                Trigger3.SetActive(false);
+                isConversation1Done = true;
+                }
         }
 
        

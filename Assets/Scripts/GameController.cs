@@ -34,6 +34,20 @@ public class GameController : MonoBehaviour
             Level1.SetActive(true);
             Level2.SetActive(false);
             Level3.SetActive(false);
+        } else if (Input.GetKeyDown(KeyCode.O))
+        {
+            IntroLevel.SetActive(false);
+            TutorialLevel.SetActive(false);
+            Level1.SetActive(false);
+            Level2.SetActive(true);
+            Level3.SetActive(false);
+        } else if (Input.GetKeyDown(KeyCode.P))
+        {
+            IntroLevel.SetActive(false);
+            TutorialLevel.SetActive(false);
+            Level1.SetActive(false);
+            Level2.SetActive(false);
+            Level3.SetActive(true);
         }
 
     }
