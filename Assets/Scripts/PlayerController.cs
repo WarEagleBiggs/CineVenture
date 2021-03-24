@@ -30,6 +30,7 @@ public class PlayerController : MonoBehaviour
     public GameObject Dial3;
     public GameObject Dial4;
     public GameObject Dial5;
+    public GameObject MatrixDial1;
     public GameObject Obj1;
     public GameObject Obj2;
     public GameObject Obj3;
@@ -42,6 +43,7 @@ public class PlayerController : MonoBehaviour
     public GameObject LineOfSight3;
     public GameObject LineOfSight4;
     public GameObject LineOfSight5;
+    public GameObject RetryScreen;
 
 
 
@@ -113,9 +115,17 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    IEnumerator Retry()
+    {
+        RetryScreen.SetActive(true);
+        yield return new WaitForSeconds(2);
+        RetryScreen.SetActive(false);
+    }
+
 
     void Dead2()
     {
+        StartCoroutine(Retry());
         Player.transform.localPosition = new Vector3(0.6f, -1.75f, 0f);
     }
 
@@ -223,7 +233,10 @@ public class PlayerController : MonoBehaviour
                 Trigger2.SetActive(false);
                 Trigger3.SetActive(false);
                 isConversation1Done = true;
-                }
+            } else if (MatrixDial1.activeSelf)
+            {
+                MatrixDial1.SetActive(false);
+            }
         }
 
        
