@@ -17,11 +17,13 @@ public class PlayerController : MonoBehaviour
     public bool isLevel1Active = false;
     public bool isLevel2Active = false;
     public bool isLevel3Active = false;
-    
+    public bool hasOnlyHappenedOnce2 = false;
+
     //floats
     public float CanOnlyHappenOnce1 = 0f;
 
     // Objs
+    public GameObject Player;
     public GameObject Shrub;
     public GameObject Dial1;
     public GameObject Dial2;
@@ -35,6 +37,11 @@ public class PlayerController : MonoBehaviour
     public GameObject Knights;
     public GameObject RocksBlockingPath;
     public GameObject Intro1;
+    public GameObject LineOfSight1;
+    public GameObject LineOfSight2;
+    public GameObject LineOfSight3;
+    public GameObject LineOfSight4;
+    public GameObject LineOfSight5;
 
 
 
@@ -62,6 +69,57 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    IEnumerator Eyesight()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(1f);
+            LineOfSight1.transform.Rotate(new Vector3(0, 0, -15));
+            LineOfSight2.transform.Rotate(new Vector3(0, 0, -15));
+            LineOfSight3.transform.Rotate(new Vector3(0, 0, -15));
+            LineOfSight4.transform.Rotate(new Vector3(0, 0, -15));
+            LineOfSight5.transform.Rotate(new Vector3(0, 0, -15));
+            yield return new WaitForSeconds(0.5f);
+            LineOfSight1.transform.Rotate(new Vector3(0, 0, -25));
+            LineOfSight2.transform.Rotate(new Vector3(0, 0, -25));
+            LineOfSight3.transform.Rotate(new Vector3(0, 0, -25));
+            LineOfSight4.transform.Rotate(new Vector3(0, 0, -25));
+            LineOfSight5.transform.Rotate(new Vector3(0, 0, -25));
+            yield return new WaitForSeconds(0.5f);
+            LineOfSight1.transform.Rotate(new Vector3(0, 0, -35));
+            LineOfSight2.transform.Rotate(new Vector3(0, 0, -35));
+            LineOfSight3.transform.Rotate(new Vector3(0, 0, -35));
+            LineOfSight4.transform.Rotate(new Vector3(0, 0, -35));
+            LineOfSight5.transform.Rotate(new Vector3(0, 0, -35));
+            yield return new WaitForSeconds(1f);
+            LineOfSight1.transform.Rotate(new Vector3(0, 0, 35));
+            LineOfSight2.transform.Rotate(new Vector3(0, 0, 35));
+            LineOfSight3.transform.Rotate(new Vector3(0, 0, 35));
+            LineOfSight4.transform.Rotate(new Vector3(0, 0, 35));
+            LineOfSight5.transform.Rotate(new Vector3(0, 0, 35));
+            yield return new WaitForSeconds(0.5f);
+            LineOfSight1.transform.Rotate(new Vector3(0, 0, 25));
+            LineOfSight2.transform.Rotate(new Vector3(0, 0, 25));
+            LineOfSight3.transform.Rotate(new Vector3(0, 0, 25));
+            LineOfSight4.transform.Rotate(new Vector3(0, 0, 25));
+            LineOfSight5.transform.Rotate(new Vector3(0, 0, 25));
+            yield return new WaitForSeconds(0.5f);
+            LineOfSight1.transform.Rotate(new Vector3(0, 0, 15));
+            LineOfSight2.transform.Rotate(new Vector3(0, 0, 15));
+            LineOfSight3.transform.Rotate(new Vector3(0, 0, 15));
+            LineOfSight4.transform.Rotate(new Vector3(0, 0, 15));
+            LineOfSight5.transform.Rotate(new Vector3(0, 0, 15));
+            //Debug.Log("yay");
+        }
+    }
+
+
+    void Dead2()
+    {
+        Player.transform.localPosition = new Vector3(0.6f, -1.75f, 0f);
+    }
+
+
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -84,8 +142,8 @@ public class PlayerController : MonoBehaviour
         {
 
             Gcontrol.Level1.SetActive(false);
-            Gcontrol.TutorialLevel.SetActive(true);
-        }
+            Gcontrol.Level2.SetActive(true);
+        } else if (collision.gameObject.tag == "Deathray") { Dead2(); } 
     }
 
     void Intro1Active()
@@ -105,13 +163,22 @@ public class PlayerController : MonoBehaviour
         if (Gcontrol.Level1.activeSelf)
         {
             isLevel1Active = true;
+        } else if (Gcontrol.Level2.activeSelf)
+        {
+            isLevel2Active = true;
         }
+
 
         if (isLevel1Active)
         {
             Intro1Active();
             StartCoroutine(waiter());
 
+        } else if (isLevel2Active && hasOnlyHappenedOnce2 == false)
+        {
+            //Debug.Log("Checking");
+            hasOnlyHappenedOnce2 = true;
+            StartCoroutine(Eyesight());
         }
 
 

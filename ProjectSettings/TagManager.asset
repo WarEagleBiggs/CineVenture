@@ -7,6 +7,7 @@ TagManager:
   - Shrub
   - DialogueTrigger1
   - Gate1
+  - Deathray
   layers:
   - Default
   - TransparentFX
