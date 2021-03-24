@@ -8,6 +8,7 @@ TagManager:
   - DialogueTrigger1
   - Gate1
   - Deathray
+  - Gate2
   layers:
   - Default
   - TransparentFX
