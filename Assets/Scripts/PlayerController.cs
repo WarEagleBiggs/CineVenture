@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
 
     //floats
     public float CanOnlyHappenOnce1 = 0f;
+    public float CanOnlyHappenOnce2 = 0f;
 
     // Objs
     public GameObject Player;
@@ -44,6 +45,8 @@ public class PlayerController : MonoBehaviour
     public GameObject LineOfSight4;
     public GameObject LineOfSight5;
     public GameObject RetryScreen;
+    public GameObject MatrixIntro;
+    public GameObject MiniMap;
 
 
 
@@ -69,6 +72,13 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(12);
         Intro1.SetActive(false);
 
+    }
+
+    IEnumerator waiter2()
+    {
+        //Wait for 8 seconds
+        yield return new WaitForSeconds(4);
+        MatrixIntro.SetActive(false);
     }
 
     IEnumerator Eyesight()
@@ -154,6 +164,9 @@ public class PlayerController : MonoBehaviour
             Gcontrol.Level1.SetActive(false);
             Gcontrol.Level2.SetActive(true);
         } else if (collision.gameObject.tag == "Deathray") { Dead2(); } 
+        else if(collision.gameObject.tag == "Gate2") { Gcontrol.Level2.SetActive(false);
+            Gcontrol.Level3.SetActive(true);
+        }
     }
 
     void Intro1Active()
@@ -164,6 +177,17 @@ public class PlayerController : MonoBehaviour
             Intro1.SetActive(true);
         }
         
+    }
+
+    void Intro2Active()
+    {
+
+        CanOnlyHappenOnce2++;
+        if (CanOnlyHappenOnce2 == 1f)
+        {
+            MatrixIntro.SetActive(true);
+        }
+
     }
 
 
@@ -178,6 +202,13 @@ public class PlayerController : MonoBehaviour
             isLevel2Active = true;
         }
 
+        if (MatrixIntro.activeSelf)
+        {
+            MiniMap.SetActive(false);
+        } else
+        {
+            MiniMap.SetActive(true);
+        }
 
         if (isLevel1Active)
         {
@@ -189,6 +220,8 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("Checking");
             hasOnlyHappenedOnce2 = true;
             StartCoroutine(Eyesight());
+            Intro2Active();
+            StartCoroutine(waiter2());
         }
 
 
