@@ -11,6 +11,10 @@ public class PlayerController : MonoBehaviour
     public Rigidbody2D theRB;
     public float moveSpeed;
 
+    //ArrowLogic
+    public Rigidbody2D ArrowRB;
+    public float ArrowBoostSpeed = 1f;
+
     //Bools
     public bool isShrubInInventory = false;
     public bool isConversation1Done = false;
@@ -18,6 +22,7 @@ public class PlayerController : MonoBehaviour
     public bool isLevel2Active = false;
     public bool isLevel3Active = false;
     public bool hasOnlyHappenedOnce2 = false;
+    public bool playerHasEnteredCar = false;
 
     //floats
     public float CanOnlyHappenOnce1 = 0f;
@@ -47,6 +52,9 @@ public class PlayerController : MonoBehaviour
     public GameObject RetryScreen;
     public GameObject MatrixIntro;
     public GameObject MiniMap;
+    public GameObject arrow;
+    public GameObject CarStill;
+    public GameObject MovingCar;
 
 
 
@@ -166,6 +174,9 @@ public class PlayerController : MonoBehaviour
         } else if (collision.gameObject.tag == "Deathray") { Dead2(); } 
         else if(collision.gameObject.tag == "Gate2") { Gcontrol.Level2.SetActive(false);
             Gcontrol.Level3.SetActive(true);
+        } else if(collision.gameObject.tag == "Car") { Player.SetActive(false);
+            CarStill.SetActive(false);
+            MovingCar.SetActive(true);
         }
     }
 
@@ -200,7 +211,13 @@ public class PlayerController : MonoBehaviour
         } else if (Gcontrol.Level2.activeSelf)
         {
             isLevel2Active = true;
+        } else if (Gcontrol.Level3.activeSelf)
+        {
+            isLevel3Active = true;
         }
+
+
+
 
         if (MatrixIntro.activeSelf)
         {
@@ -224,6 +241,7 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(waiter2());
         }
 
+        
 
         if (isShrubInInventory)
         {
@@ -269,6 +287,10 @@ public class PlayerController : MonoBehaviour
             } else if (MatrixDial1.activeSelf)
             {
                 MatrixDial1.SetActive(false);
+            } else if (isLevel3Active && playerHasEnteredCar)
+            {
+                ArrowRB.AddForce(transform.up * ArrowBoostSpeed);
+                Debug.Log("Works");
             }
         }
 

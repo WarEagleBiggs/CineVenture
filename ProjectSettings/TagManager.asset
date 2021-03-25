@@ -9,6 +9,7 @@ TagManager:
   - Gate1
   - Deathray
   - Gate2
+  - Car
   layers:
   - Default
   - TransparentFX
