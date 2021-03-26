@@ -15,6 +15,9 @@ public class PlayerController : MonoBehaviour
     public Rigidbody2D ArrowRB;
     public float ArrowBoostSpeed = 1f;
 
+    //Car rigidbody
+    public Rigidbody2D CarRB;
+
     //Bools
     public bool isShrubInInventory = false;
     public bool isConversation1Done = false;
@@ -27,6 +30,9 @@ public class PlayerController : MonoBehaviour
     //floats
     public float CanOnlyHappenOnce1 = 0f;
     public float CanOnlyHappenOnce2 = 0f;
+    public float CarMoveSpeed;
+
+
 
     // Objs
     public GameObject Player;
@@ -53,8 +59,12 @@ public class PlayerController : MonoBehaviour
     public GameObject MatrixIntro;
     public GameObject MiniMap;
     public GameObject arrow;
+    public GameObject Bar;
     public GameObject CarStill;
     public GameObject MovingCar;
+    public GameObject PlayerCam;
+    public GameObject ColliderSet2;
+    
 
 
 
@@ -66,7 +76,7 @@ public class PlayerController : MonoBehaviour
     //Player anim vars
     public Animator myAnim;
 
-
+    
     void Start()
     {
         //remember this happens in INTRO level!
@@ -171,12 +181,27 @@ public class PlayerController : MonoBehaviour
 
             Gcontrol.Level1.SetActive(false);
             Gcontrol.Level2.SetActive(true);
-        } else if (collision.gameObject.tag == "Deathray") { Dead2(); } 
-        else if(collision.gameObject.tag == "Gate2") { Gcontrol.Level2.SetActive(false);
+        } else if (collision.gameObject.tag == "Deathray") { 
+
+            Dead2(); 
+        } 
+        else if(collision.gameObject.tag == "Gate2") { 
+            Gcontrol.Level2.SetActive(false);
             Gcontrol.Level3.SetActive(true);
-        } else if(collision.gameObject.tag == "Car") { Player.SetActive(false);
+
+        } else if(collision.gameObject.tag == "Car") 
+        {
+            
+            //SpriteRenderer test = Player.GetComponent<SpriteRenderer>();
+            PlayerCam.SetActive(false);
+            Player.transform.position = new Vector3(1000f, 10000f, 1f);
             CarStill.SetActive(false);
+            Bar.SetActive(true);
+            arrow.SetActive(true);
             MovingCar.SetActive(true);
+            playerHasEnteredCar = true;
+            ColliderSet2.SetActive(false);
+            MoveCar();
         }
     }
 
@@ -188,6 +213,13 @@ public class PlayerController : MonoBehaviour
             Intro1.SetActive(true);
         }
         
+    }
+
+    public void MoveCar()
+    {
+
+        //CarRB.AddForce(transform.right * CarMoveSpeed);
+        CarRB.velocity = transform.right * CarMoveSpeed;
     }
 
     void Intro2Active()
@@ -216,7 +248,10 @@ public class PlayerController : MonoBehaviour
             isLevel3Active = true;
         }
 
-
+        // moves arrow
+        Vector3 arrowPos = arrow.transform.position;
+        arrowPos.x = Bar.transform.position.x;
+        arrow.transform.position = arrowPos;
 
 
         if (MatrixIntro.activeSelf)
@@ -290,7 +325,7 @@ public class PlayerController : MonoBehaviour
             } else if (isLevel3Active && playerHasEnteredCar)
             {
                 ArrowRB.AddForce(transform.up * ArrowBoostSpeed);
-                Debug.Log("Works");
+                //Debug.Log("Works");
             }
         }
 

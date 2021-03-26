@@ -10,6 +10,9 @@ TagManager:
   - Deathray
   - Gate2
   - Car
+  - TopSpeed
+  - GoodSpeed
+  - SlowSpeed
   layers:
   - Default
   - TransparentFX
