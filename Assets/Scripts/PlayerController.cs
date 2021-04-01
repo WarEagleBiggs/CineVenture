@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -26,10 +27,12 @@ public class PlayerController : MonoBehaviour
     public bool isLevel3Active = false;
     public bool hasOnlyHappenedOnce2 = false;
     public bool playerHasEnteredCar = false;
+    public bool isArrowInGreen = false;
 
     //floats
     public float CanOnlyHappenOnce1 = 0f;
     public float CanOnlyHappenOnce2 = 0f;
+    public float CanOnlyHappenOnce3 = 0f;
     public float CarMoveSpeed;
 
 
@@ -64,6 +67,11 @@ public class PlayerController : MonoBehaviour
     public GameObject MovingCar;
     public GameObject PlayerCam;
     public GameObject ColliderSet2;
+    public GameObject BTFdial;
+    public GameObject CarEffect;
+    public List<GameObject> ObjsToDisable;
+    public GameObject Intro3;
+    public GameObject EndScreen;
     
 
 
@@ -81,6 +89,7 @@ public class PlayerController : MonoBehaviour
     {
         //remember this happens in INTRO level!
         //nothing yet
+        //NO
     }
 
     IEnumerator waiter()
@@ -95,9 +104,17 @@ public class PlayerController : MonoBehaviour
     IEnumerator waiter2()
     {
         //Wait for 8 seconds
-        yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(5);
         MatrixIntro.SetActive(false);
     }
+
+    IEnumerator waiter3()
+    {
+        yield return new WaitForSeconds(5);
+        Intro3.SetActive(false);
+    }
+
+
 
     IEnumerator Eyesight()
     {
@@ -233,10 +250,115 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    void Intro3Active()
+    {
+        CanOnlyHappenOnce3++;
+            if(CanOnlyHappenOnce3 == 1f)
+        {
+            Intro3.SetActive(true);
+        }
+    }
+
+    
+
+    private bool PrevIsGreen;
+    private float StartTimeWithinGreenSec;
+    public List<GameObject> SequenceImages;
+    public bool IsRaceCompleted = false;
+    
+
+    void MonitorCount()
+    {
+        if (isArrowInGreen)
+        {
+
+            
+
+            if (PrevIsGreen != isArrowInGreen)
+            {
+                StartTimeWithinGreenSec = Time.time;
+            }
+            // set visibility on images
+            float durationSec = Time.time - StartTimeWithinGreenSec;
+
+            int index = (int)durationSec;
+
+            if (index >= 10)
+            {
+                IsRaceCompleted = true;
+                //MovingCar.SetActive(false);
+                MovingCar.GetComponent<SpriteRenderer>().enabled = false;
+                CarEffect.SetActive(true);
+                foreach(GameObject obj in ObjsToDisable)
+                {
+                    obj.SetActive(false);
+                }
+            }
+
+            int i = 0;
+            foreach(GameObject obj in SequenceImages)
+            {
+                if (i <= index)
+                {
+                    obj.SetActive(true);
+                }
+                else
+                {
+                    obj.SetActive(false);
+                }
+
+                i++;
+            }
+        } else
+        {
+            // hide all images
+            foreach(GameObject obj in SequenceImages)
+            {
+                obj.SetActive(false);
+            }
+        }
+        // sets prev to current
+        PrevIsGreen = isArrowInGreen;
+    }
+
+    public bool shouldOnlyHappenOnce = false;
+    public bool isRoutineRunning = false;
+
+    IEnumerator End()
+    {
+        yield return new WaitForSeconds(2);
+        EndScreen.SetActive(true);
+        yield return new WaitForSeconds(4);
+        EndScreen.SetActive(false);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
+        
+
+
+    }
+
 
     // Update is called once per frame
     void Update()
     {
+
+        if (IsRaceCompleted)
+        {
+            CarRB.velocity = transform.right * 0f;
+            StartCoroutine(End());
+        }
+
+
+        MonitorCount();
+
+    /* if (isArrowInGreen)
+        {
+            StartCoroutine(tenseconds());
+        } 
+     if (!isArrowInGreen)
+        {
+            StopCoroutine(tenseconds());
+        }*/
+
         if (Gcontrol.Level1.activeSelf)
         {
             isLevel1Active = true;
@@ -248,10 +370,16 @@ public class PlayerController : MonoBehaviour
             isLevel3Active = true;
         }
 
+
         // moves arrow
         Vector3 arrowPos = arrow.transform.position;
         arrowPos.x = Bar.transform.position.x;
         arrow.transform.position = arrowPos;
+
+        // moves car flames
+        Vector3 FirePos = CarEffect.transform.position;
+        FirePos.x = MovingCar.transform.position.x;
+        CarEffect.transform.position = FirePos;
 
 
         if (MatrixIntro.activeSelf)
@@ -274,6 +402,9 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(Eyesight());
             Intro2Active();
             StartCoroutine(waiter2());
+        } else if (isLevel3Active) {
+            Intro3Active();
+            StartCoroutine(waiter3());
         }
 
         
@@ -326,6 +457,9 @@ public class PlayerController : MonoBehaviour
             {
                 ArrowRB.AddForce(transform.up * ArrowBoostSpeed);
                 //Debug.Log("Works");
+            } else if (BTFdial.activeSelf)
+            {
+                BTFdial.SetActive(false);
             }
         }
 
